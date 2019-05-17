@@ -13,6 +13,45 @@
 <body>
 <video id="camera" autoplay playsinline></video>
 <button id="start">start camera</button>
-<script src="main.js"></script>
+<script>
+'use strict';
+
+function handleSuccess(stream) {
+    // obtain the "video" element
+    const video = document.querySelector('video');
+    // obtain video track from stream
+    const videoTracks = stream.getVideoTracks();
+    // connect stream to window.stream
+    window.stream = stream; 
+    // connect stream to video.srcObject
+    video.srcObject = stream;
+}
+
+// 
+function handleError(error) {
+    console.error(error);
+}
+
+async function init(e) {
+    const constraints = {
+        audio: false,  // no use audio device
+        video: true // use default video decice
+    };
+
+    try {
+        // initialize video device by getUserMedia function
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        // When browser successes the initialization of devices, connect stream to windows.stream
+        handleSuccess(stream);
+        e.target.disabled = true;
+    } catch (e) {
+        handleError(e);
+    }
+}
+
+document.querySelector('#start').addEventListener('click', function(e){
+    init(e);
+}); 
+</script>
 </body>
 </html>
